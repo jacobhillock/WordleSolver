@@ -48,15 +48,17 @@ def process_guessed_words(words_guessed: list[str]):
     for word in words_guessed:
         letters = re.findall("\w", word)
         word_t = word
-        # print(letters)
+        print(letters)
         for letterPos, letter in enumerate(letters):
-            # print(word_t)
+            print(word_t)
             i = word_t.index(letter)
             if i == 0:
-                if (type(regex_list[letterPos]) != list and regex_list[letterPos] == '.'):
-                    regex_list[letterPos] = list([])
-                regex_list[letterPos].append(letter)
-                exclude.append(letter)
+                if letter not in include:
+                    if (type(regex_list[letterPos]) != list and regex_list[letterPos] == '.'):
+                        regex_list[letterPos] = list([])
+                    if (type(regex_list[letterPos]) == list):
+                        regex_list[letterPos].append(letter)
+                        exclude.append(letter)
                 word_t = word_t[1:]
             elif word_t[i-1] == '[' and word_t[i+1] == ']':
                 include.append(letter)
