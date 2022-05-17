@@ -47,20 +47,27 @@ def process_guessed_words(words_guessed: list[str]):
 
     for word in words_guessed:
         letters = re.findall("\w", word)
+        word_t = word
+        # print(letters)
         for letterPos, letter in enumerate(letters):
-            i = word.index(letter)
+            # print(word_t)
+            i = word_t.index(letter)
             if i == 0:
+                if (type(regex_list[letterPos]) != list and regex_list[letterPos] == '.'):
+                    regex_list[letterPos] = list([])
+                regex_list[letterPos].append(letter)
                 exclude.append(letter)
-            elif word[i-1] == '[' and word[i+1] == ']':
+                word_t = word_t[1:]
+            elif word_t[i-1] == '[' and word_t[i+1] == ']':
                 include.append(letter)
                 regex_list[letterPos] = letter
-            elif word[i-1] == '{' and word[i+1] == '}':
+                word_t = word_t[3:]
+            elif word_t[i-1] == '{' and word_t[i+1] == '}':
                 include.append(letter)
                 if (type(regex_list[letterPos]) != list and regex_list[letterPos] == '.'):
                     regex_list[letterPos] = list([])
                 regex_list[letterPos].append(letter)
-            else:
-                exclude.append(letter)
+                word_t = word_t[3:]
 
     regex = ""
     for r in regex_list:
@@ -68,6 +75,8 @@ def process_guessed_words(words_guessed: list[str]):
             regex += '[^' + "".join(r) + ']'
         else:
             regex += r
+    exclude = [e for e in exclude if e not in include]
+    # print(regex, include, exclude)
     return regex, include, exclude
 
 
