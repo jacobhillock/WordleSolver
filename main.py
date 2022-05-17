@@ -13,12 +13,6 @@ from globals import WORD_LENGTH
 
 def get_args() -> Namespace:
     parser = ArgumentParser(description='Description.')
-    parser.add_argument('-r', '--regex', type=str,
-                        help='Regex pattern to find')
-    parser.add_argument('-e', '--exclude', type=str, nargs='*',
-                        help='Letters that can not be included')
-    parser.add_argument('-i', '--include', type=str, nargs='*',
-                        help='Letters needed to be included')
 
     parser.add_argument('-w', '--wordsGuessed', type=str,
                         nargs='+', help="""Words that have been guessed with the following format
@@ -39,10 +33,13 @@ def get_allowed_words(bank: list[str], regex: str, include: list[str], exclude: 
 
 def main():
     args = get_args()
+    regex = ""
+    include = []
+    exclude = []
     try:
         words = load()
         if (args.wordsGuessed is not None):
-            args.regex, args.include, args.exclude = process_guessed_words(
+            regex, include, exclude = process_guessed_words(
                 args.wordsGuessed)
     except LetterException as e:
         print(e)
@@ -54,7 +51,7 @@ def main():
         print(e)
         exit()
 
-    allowed = get_allowed_words(words, args.regex, args.include, args.exclude)
+    allowed = get_allowed_words(words, regex, include, exclude)
     print(", ".join(allowed))
     print(f"{len(allowed)}/{len(words)}")
 
