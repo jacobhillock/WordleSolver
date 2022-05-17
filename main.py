@@ -43,7 +43,7 @@ def get_allowed_words(bank: list[str], regex: str, include: list[str], exclude: 
 def process_guessed_words(words_guessed: list[str]):
     include = []
     exclude = []
-    regex_list = ['.', '.', '.', '.', '.']
+    regex_list = [[], [], [], [], []]
 
     for word in words_guessed:
         letters = re.findall("\w", word)
@@ -53,12 +53,9 @@ def process_guessed_words(words_guessed: list[str]):
             print(word_t)
             i = word_t.index(letter)
             if i == 0:
-                if letter not in include:
-                    if (type(regex_list[letterPos]) != list and regex_list[letterPos] == '.'):
-                        regex_list[letterPos] = list([])
-                    if (type(regex_list[letterPos]) == list):
-                        regex_list[letterPos].append(letter)
-                        exclude.append(letter)
+                if letter not in include and type(regex_list[letterPos]) == list:
+                    regex_list[letterPos].append(letter)
+                    exclude.append(letter)
                 word_t = word_t[1:]
             elif word_t[i-1] == '[' and word_t[i+1] == ']':
                 include.append(letter)
@@ -74,7 +71,10 @@ def process_guessed_words(words_guessed: list[str]):
     regex = ""
     for r in regex_list:
         if type(r) == list:
-            regex += '[^' + "".join(r) + ']'
+            if len(r) != 0:
+                regex += '[^' + "".join(r) + ']'
+            else:
+                regex += '.'
         else:
             regex += r
     exclude = [e for e in exclude if e not in include]
