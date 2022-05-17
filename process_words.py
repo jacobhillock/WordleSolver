@@ -24,9 +24,11 @@ def process_guessed_words(words_guessed: list[str]):
             # letter does not have location noted
             if i == 0:
                 # ensure letter was not solved
-                if letter not in include and type(regex_list[letterPos]) == list:
+                if type(regex_list[letterPos]) == list:
                     regex_list[letterPos].append(letter)
+                if letter not in include:
                     exclude.append(letter)
+
                 word_t = word_t[1:]
 
             # letter is surrounded by [] meaning it is correct
@@ -69,5 +71,4 @@ def process_guessed_words(words_guessed: list[str]):
                 regex += '.'
         else:
             regex += r
-
     return regex, include, exclude
