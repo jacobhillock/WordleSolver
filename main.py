@@ -23,8 +23,11 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('-i', '--include', type=str, nargs='*',
                         help='Letters needed to be included')
 
-    # parser.add_argument('-w', '--wordsGuessed', type=str,
-    #                     nargs='+', help='Words that have been guessed')
+    parser.add_argument('-w', '--wordsGuessed', type=str,
+                        nargs='+', help="""Words that have been guessed with the following format
+                        xx[a]xx: a is in the correct spot
+                        xx{a}xx: a exists in the word
+                        xxaxx: a does not exist in the word""")
     args = parser.parse_args()
     return args
 
@@ -37,8 +40,42 @@ def get_allowed_words(bank: list[str], regex: str, include: list[str], exclude: 
     return bank
 
 
+def process_guessed_words(words_guessed: list[str]):
+    include = []
+    exclude = []
+    regex_list = ['.', '.', '.', '.', '.']
+
+    for word in words_guessed:
+        letters = re.findall("\w", word)
+        for letterPos, letter in enumerate(letters):
+            i = word.index(letter)
+            if i == 0:
+                exclude.append(letter)
+            elif word[i-1] == '[' and word[i+1] == ']':
+                include.append(letter)
+                regex_list[letterPos] = letter
+            elif word[i-1] == '{' and word[i+1] == '}':
+                include.append(letter)
+                if (type(regex_list[letterPos]) != list and regex_list[letterPos] == '.'):
+                    regex_list[letterPos] = list([])
+                regex_list[letterPos].append(letter)
+            else:
+                exclude.append(letter)
+
+    regex = ""
+    for r in regex_list:
+        if type(r) == list:
+            regex += '[^' + "".join(r) + ']'
+        else:
+            regex += r
+    return regex, include, exclude
+
+
 def main():
     args = get_args()
+    if (args.wordsGuessed is not None):
+        args.regex, args.include, args.exclude = process_guessed_words(
+            args.wordsGuessed)
     words = load()
     allowed = get_allowed_words(words, args.regex, args.include, args.exclude)
     print(", ".join(allowed))
