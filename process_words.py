@@ -1,5 +1,6 @@
 from re import findall
 from Custom_Exceptions import LetterException, FormatException
+from globals import WORD_LENGTH
 
 
 def process_guessed_words(words_guessed: list[str]):

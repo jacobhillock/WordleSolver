@@ -8,9 +8,7 @@ from re import search
 from Custom_Exceptions import LetterException, LoadException, FormatException
 from process_words import process_guessed_words
 from load_words import load
-
-
-WORD_LENGTH = 5
+from globals import WORD_LENGTH
 
 
 def get_args() -> Namespace:
