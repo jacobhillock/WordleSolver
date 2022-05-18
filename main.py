@@ -1,14 +1,13 @@
 # Standard Libraries
-from operator import ge
 from sys import exit
 from argparse import ArgumentParser, Namespace
-from re import search, findall
 
 # Custom Imports
 from Custom_Exceptions import LetterException, LoadException, FormatException
+from globals import WORD_LENGTH
 from process_words import process_guessed_words
 from load_words import load
-from globals import WORD_LENGTH
+from allowed_words import get_allowed_words
 
 
 def get_args() -> Namespace:
@@ -23,25 +22,12 @@ def get_args() -> Namespace:
     return args
 
 
-def include_word(word: str, char: str, count: int) -> bool:
-    finds = findall(char, word)
-    return len(finds) == count
-
-
-def get_allowed_words(bank: list[str], regex: str, include: dict[str, int], exclude: list[str]):
-    bank = [w for w in bank if search(regex, w)]
-    bank = [w for w in bank if all(
-        [include_word(w, char, count) for char, count in include.items()])]
-    bank = [w for w in bank if all([char not in w for char in exclude])]
-
-    return bank
-
-
 def main():
     args = get_args()
     regex = ""
     include = {}
     exclude = []
+
     try:
         words = load()
         if (args.wordsGuessed is not None):
