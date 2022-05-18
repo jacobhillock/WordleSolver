@@ -43,6 +43,7 @@ def main():
         print(e)
         exit()
 
+    print("\n".join([f"{key}: {value}" for key, value in include.items()]))
     allowed = get_allowed_words(words, regex, include, exclude)
     print(", ".join(allowed))
     print(f"{len(allowed)}/{len(words)}")
