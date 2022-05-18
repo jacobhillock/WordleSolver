@@ -12,7 +12,7 @@ def process_guessed_words(words_guessed: list[str]) -> Tuple[str, dict[str, Allo
 
     # process words
     for word in words_guessed:
-        word_t = word
+        word_t = word.lower()
         run_include = {}
         # find letters in word
         letters = findall("\w", word)
